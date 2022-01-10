@@ -19,10 +19,39 @@ TNODE * create_node ( char digit, TNODE * next ) {
     return node;
 }
 
+void free_list ( TNODE * l ) {
+    TNODE * tmp = NULL;
+    while ( l ) {
+        tmp = l -> next;
+        free ( l );
+        l = tmp;
+    }
+}
+
 /**
  * @param str input string with digits for the linked list
  * @return pointer to the head of the parsed linked list 
 */
+
+int list_size ( TNODE * l ) {
+    int size = 0;
+    while ( l ) {
+        size++;
+        l = l -> next;
+    }
+    return size;
+}
+
+int is_valid ( TNODE * l ) {
+    int isZero = 0;
+    while ( l ) {
+        if ( l -> digit == '0' )
+            isZero = 1;
+        else isZero = 0;
+        l = l -> next;
+    }
+    return !isZero;
+}
 
 TNODE * parse_list ( const char * str ) {
     TNODE * l = NULL, *curr = NULL;
@@ -37,6 +66,10 @@ TNODE * parse_list ( const char * str ) {
         }
         str++;
     }
+    if ( !is_valid ( l ) ) {
+        free_list ( l );
+        return NULL;
+    }
     return l;
 }
 
@@ -50,16 +83,11 @@ TNODE * parse_num ( const char * str ) {
         }
         str++;
     }
-    return l;
-}
-
-int list_size ( TNODE * l ) {
-    int size = 0;
-    while ( l ) {
-        size++;
-        l = l -> next;
+    if ( !is_valid ( l ) ) {
+        free_list ( l );
+        return NULL;
     }
-    return size;
+    return l;
 }
 
 int compare_lists ( TNODE * a, TNODE * b ) {
@@ -79,7 +107,8 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     int n = get_min ( list_size ( a ), list_size ( b ) );
     int res = 0, carry = 0;
     while ( n-- ) {
-        res = a -> digit - '0' + b -> digit - '0';
+        res = a -> digit - '0' + b -> digit - '0' + carry;
+        carry = 0;
         if ( res >= 10 ) {
             carry = 1;
             res %= 10;
@@ -90,7 +119,17 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
             curr -> next = create_node ( res + '0', NULL );
             curr = curr -> next;
         }
+        a = a -> next;
+        b = b -> next;
     }
+    TNODE * tmp = a ? a : b;
+    while ( tmp ) {
+        curr -> next = create_node ( tmp -> digit, NULL );
+        curr = curr -> next;
+        tmp = tmp -> next;
+    }
+    if ( carry )
+        curr -> next = create_node ( carry + '0', NULL );
     return l;
 }
 
@@ -111,20 +150,11 @@ void print_num_rec ( TNODE * l, int first ) {
 
 void print_num ( TNODE * l ) {
     if ( !l ) {
-        printf("ERR: LIST IS EMPTY");
+        printf("ERR: LIST IS EMPTY\n");
         return;
     }
     print_num_rec ( l, 1 );
     printf("\n");
-}
-
-void free_list ( TNODE * l ) {
-    TNODE * tmp = NULL;
-    while ( l ) {
-        tmp = l -> next;
-        free ( l );
-        l = tmp;
-    }
 }
 
 //TEST PROCEDURES
@@ -135,13 +165,17 @@ void are_equal ( TNODE * ref, TNODE * actual ) {
 }
 
 int main ( void ) {
-    TNODE * a = parse_list ( "1234" );
-    TNODE * b = parse_list ( "12      3    4" );
+    TNODE * a = parse_list ( "275" );
+    TNODE * b = parse_list ( "326" );
     TNODE * c = list_sum ( a, b );
+
     print_list ( a );
     print_list ( b );
+    print_list ( c );
+
     print_num ( a );
     print_num ( b );
+    print_num ( c );
 
     free_list ( a );
     free_list ( b );
