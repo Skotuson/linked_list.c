@@ -35,6 +35,19 @@ TNODE * parse_list ( const char * str ) {
     return l;
 }
 
+TNODE * parse_num ( const char * str ) {
+    TNODE * l = NULL;   
+    while ( *str ) {
+        if ( isdigit ( *str ) ) {
+            if ( !l ) 
+                l = create_node ( *str, NULL );
+            else l = create_node ( *str, l );    
+        }
+        str++;
+    }
+    return l;
+}
+
 int list_size ( TNODE * l ) {
     int size = 0;
     while ( l ) {
@@ -51,12 +64,32 @@ int compare_lists ( TNODE * ref, TNODE * actual ) {
     return 1;
 }
 
+TNODE * list_sum ( TNODE * a, TNODE * b ) {
+    TNODE * l = NULL;
+    return l;
+}
+
 void print_list ( TNODE * l ) {
-    if ( !list_size( l ) ) printf("ERR: LIST IS EMPTY");
+    if ( !l ) printf("ERR: LIST IS EMPTY");
     while ( l ) {
         printf("%c -> ", l -> digit);
         l = l -> next;
     }
+    printf("\n");
+}
+
+void print_num_rec ( TNODE * l, int first ) {
+    if ( l -> next )
+        print_num_rec ( l -> next, 0 ); 
+    printf("%c", l -> digit);
+}
+
+void print_num ( TNODE * l ) {
+    if ( !l ) {
+        printf("ERR: LIST IS EMPTY");
+        return;
+    }
+    print_num_rec ( l, 1 );
     printf("\n");
 }
 
@@ -70,9 +103,11 @@ void free_list ( TNODE * l ) {
 }
 
 int main ( void ) {
-    TNODE * a = parse_list ( "5 -> 2 -> 3 -> 4" );
-    TNODE *b = parse_list ( "9 5 4 7" );
+    TNODE * a = parse_list ( "5234" );
+    TNODE *b = parse_num ( "9547" );
     print_list ( a );
     print_list ( b );
+    print_num ( a );
+    print_num ( b );
     return 0;
 }
