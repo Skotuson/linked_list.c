@@ -22,6 +22,8 @@ typedef struct TNode {
     char digit;
 } TNODE;
 
+void print_list ( TNODE * l );
+
 TNODE * create_node ( char digit, TNODE * next ) {
     TNODE * node = ( TNODE* ) malloc ( sizeof( TNODE ) );
     node -> next = next;
@@ -49,11 +51,13 @@ int list_size ( TNODE * l ) {
 
 int is_valid ( TNODE * l ) {
     int isZero = 0;
+    int f = 1;
     while ( l ) {
-        if ( l -> digit == '0' )
+        if ( l -> digit == '0' && !f )
             isZero = 1;
         else isZero = 0;
         l = l -> next;
+        f = 0;
     }
     return !isZero;
 }
@@ -123,14 +127,20 @@ int compare_lists ( TNODE * a, TNODE * b ) {
     return 1;
 }
 
+/**
+ * Functions sums the linked list provided in params.
+ * @param a number represented as a linked list 
+ * @param b number represented as a linked list
+ * @return Pointer to the head of the linked list representing the sum.
+*/
 TNODE * list_sum ( TNODE * a, TNODE * b ) {
+    
     TNODE * l = NULL, *curr = NULL;
     int n = get_min ( list_size ( a ), list_size ( b ) );
     int res = 0, carry = 0;
     while ( n-- ) {
         if ( sum_digits ( a -> digit - '0', b -> digit - '0', &res ) )
             carry = 1;
-        else carry = 0;
         if ( !l )
             curr = l = create_node ( res + '0', NULL );
         else{
@@ -140,20 +150,21 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
         a = a -> next;
         b = b -> next;
     }
+    
     TNODE * tmp = a ? a : b;
     while ( tmp ) {
         if ( sum_digits ( tmp -> digit - '0', carry, &res ) )
             carry = 1;
         else carry = 0;
-        curr -> next = create_node ( res + '0', NULL );
+        curr -> next = create_node ( ( res + carry ) + '0', NULL );
         curr = curr -> next;
         tmp = tmp -> next;
     }
-    if ( carry ) {
+    if ( carry ) 
         curr -> next = create_node ( carry + '0', NULL );
-    }
     return l;
 }
+
                                 /*PRINTING FUNCTIONS*/
 //----------------------------------------------------------------------------------//
 
@@ -185,28 +196,41 @@ void print_num ( TNODE * l ) {
                             /*TESTING METHODS*/
 //----------------------------------------------------------------------------------//
 
-void are_equal ( TNODE * ref, TNODE * actual ) {
-    if ( !compare_lists ( ref, actual ) )
+void test ( const char * n1, const char * n2, const char * r ) {
+    TNODE * a, *b, *c, *ref;
+
+    a = parse_num ( n1 );
+    b = parse_num ( n2 );
+    c = list_sum ( a, b );
+    ref = parse_num ( r );
+   
+    if ( !compare_lists ( ref, c ) ) {
+        printf("--------------------\n");
+        print_list ( a );
+        print_list ( b );  
+        printf("GOT: ");
+        print_list ( c );
+        printf("REF: ");
+        print_list ( ref );
         printf( "ERR: VALUE MISMATCH\n" );
-    else printf( "EQUAL: OK\n" );
-}
-
-int main ( void ) {
-
-    TNODE * a = parse_num ( "9111" );
-    TNODE * b = parse_num ( "999" );
-    TNODE * c = list_sum ( a, b );
-
-    print_list ( a );
-    print_list ( b );
-    print_list ( c );
-
-    print_num ( a );
-    print_num ( b );
-    print_num ( c );
+        printf("--------------------\n");
+    } else printf( "EQUAL: OK\n" );
 
     free_list ( a );
     free_list ( b );
     free_list ( c );
+    free_list ( ref );
+}
+
+//----------------------------------------------------------------------------------//
+
+int main ( void ) {
+    
+    test ( "0", "0", "0" );
+    test ( "1", "1", "2" );
+    test ( "0", "1", "1" );
+    test ( "111", "9999", "10110" );
+    test ( "5432", "29", "5461" );
+
     return 0;
 }
