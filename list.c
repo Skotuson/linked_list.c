@@ -8,13 +8,20 @@ int get_min ( int a, int b ) {
     return a < b ? a : b;
 }
 
-int sum_digits ( int a, int b, int * r ) {
-    *r = a + b;
-    if ( *r >= 10 ) {
-        *r %= 10;
-        return 1;
+/**
+ * Sums the two numbers and checks if the result is bigger than 10.
+ * If it is, it assigns value to the output parameter representing the "carry"
+ * @param c output parameter representing the carry
+ * @return The sum of a and b
+*/
+int sum_digits ( int a, int b, int * c ) {
+    int r = a + b + *c;
+    *c = 0;
+    if ( r >= 10 ) {
+        *c = 1;
+        r %= 10;
     }
-    return 0;
+    return r;
 }
 
 typedef struct TNode {
@@ -31,7 +38,7 @@ TNODE * create_node ( char digit, TNODE * next ) {
     return node;
 }
 
-void free_list ( TNODE * l ) {
+void del_list ( TNODE * l ) {
     TNODE * tmp = NULL;
     while ( l ) {
         tmp = l -> next;
@@ -64,6 +71,7 @@ int is_valid ( TNODE * l ) {
 
                                 /*PARSING FUNCTIONS*/
 //----------------------------------------------------------------------------------//
+
 /**
  * Function takes the input string and turns each digit into linked list, keeping the same order of the digits. 
  * "1234" will be parsed into 1 -> 2 -> 3 -> 4 -> NULL
@@ -84,7 +92,7 @@ TNODE * parse_list ( const char * str ) {
         str++;
     }
     if ( !is_valid ( l ) ) {
-        free_list ( l );
+        del_list ( l );
         return NULL;
     }
     return l;
@@ -107,7 +115,7 @@ TNODE * parse_num ( const char * str ) {
         str++;
     }
     if ( !is_valid ( l ) ) {
-        free_list ( l );
+        del_list ( l );
         return NULL;
     }
     return l;
@@ -139,12 +147,11 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     int n = get_min ( list_size ( a ), list_size ( b ) );
     int res = 0, carry = 0;
     while ( n-- ) {
-        if ( sum_digits ( a -> digit - '0', b -> digit - '0', &res ) )
-            carry = 1;
+        res = sum_digits ( a -> digit - '0', b -> digit - '0', &carry );
         if ( !l )
             curr = l = create_node ( res + '0', NULL );
         else{
-            curr -> next = create_node ( ( res + carry ) + '0', NULL );
+            curr -> next = create_node ( res + '0', NULL );
             curr = curr -> next;
         }
         a = a -> next;
@@ -153,15 +160,19 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     
     TNODE * tmp = a ? a : b;
     while ( tmp ) {
-        if ( sum_digits ( tmp -> digit - '0', carry, &res ) )
-            carry = 1;
-        else carry = 0;
-        curr -> next = create_node ( ( res + carry ) + '0', NULL );
+        res = sum_digits ( tmp -> digit - '0', 0, &carry );
+        curr -> next = create_node ( res + '0', NULL );
         curr = curr -> next;
         tmp = tmp -> next;
     }
     if ( carry ) 
         curr -> next = create_node ( carry + '0', NULL );
+    return l;
+}
+
+TNODE * list_shift ( TNODE * n, unsigned int shift ) {
+    TNODE * l = NULL;
+
     return l;
 }
 
@@ -206,20 +217,22 @@ void test ( const char * n1, const char * n2, const char * r ) {
    
     if ( !compare_lists ( ref, c ) ) {
         printf("--------------------\n");
+        printf( "ERR: VALUE MISMATCH\n" );
         print_list ( a );
         print_list ( b );  
         printf("GOT: ");
         print_list ( c );
+        print_num ( c );
         printf("REF: ");
         print_list ( ref );
-        printf( "ERR: VALUE MISMATCH\n" );
+        print_num ( ref );
         printf("--------------------\n");
     } else printf( "EQUAL: OK\n" );
 
-    free_list ( a );
-    free_list ( b );
-    free_list ( c );
-    free_list ( ref );
+    del_list ( a );
+    del_list ( b );
+    del_list ( c );
+    del_list ( ref );
 }
 
 //----------------------------------------------------------------------------------//
@@ -231,6 +244,8 @@ int main ( void ) {
     test ( "0", "1", "1" );
     test ( "111", "9999", "10110" );
     test ( "5432", "29", "5461" );
+    test ( "5432", "29", "5461" );
+    test ( "2009", "991", "3000" );
 
     return 0;
 }
