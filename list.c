@@ -2,9 +2,19 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-//helper funcs
+                                /*HELPER FUNCTIONS*/
+//----------------------------------------------------------------------------------//
 int get_min ( int a, int b ) {
     return a < b ? a : b;
+}
+
+int sum_digits ( int a, int b, int * r ) {
+    *r = a + b;
+    if ( *r >= 10 ) {
+        *r %= 10;
+        return 1;
+    }
+    return 0;
 }
 
 typedef struct TNode {
@@ -118,16 +128,13 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     int n = get_min ( list_size ( a ), list_size ( b ) );
     int res = 0, carry = 0;
     while ( n-- ) {
-        res = a -> digit - '0' + b -> digit - '0' + carry;
-        carry = 0;
-        if ( res >= 10 ) {
+        if ( sum_digits ( a -> digit - '0', b -> digit - '0', &res ) )
             carry = 1;
-            res %= 10;
-        }
+        else carry = 0;
         if ( !l )
             curr = l = create_node ( res + '0', NULL );
         else{
-            curr -> next = create_node ( res + '0', NULL );
+            curr -> next = create_node ( ( res + carry ) + '0', NULL );
             curr = curr -> next;
         }
         a = a -> next;
@@ -135,12 +142,16 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     }
     TNODE * tmp = a ? a : b;
     while ( tmp ) {
-        curr -> next = create_node ( tmp -> digit, NULL );
+        if ( sum_digits ( tmp -> digit - '0', carry, &res ) )
+            carry = 1;
+        else carry = 0;
+        curr -> next = create_node ( res + '0', NULL );
         curr = curr -> next;
         tmp = tmp -> next;
     }
-    if ( carry )
+    if ( carry ) {
         curr -> next = create_node ( carry + '0', NULL );
+    }
     return l;
 }
                                 /*PRINTING FUNCTIONS*/
@@ -171,9 +182,9 @@ void print_num ( TNODE * l ) {
     printf("\n");
 }
 
+                            /*TESTING METHODS*/
 //----------------------------------------------------------------------------------//
 
-//TEST PROCEDURES
 void are_equal ( TNODE * ref, TNODE * actual ) {
     if ( !compare_lists ( ref, actual ) )
         printf( "ERR: VALUE MISMATCH\n" );
@@ -181,9 +192,9 @@ void are_equal ( TNODE * ref, TNODE * actual ) {
 }
 
 int main ( void ) {
-    
-    TNODE * a = parse_list ( "999" );
-    TNODE * b = parse_list ( "1111" );
+
+    TNODE * a = parse_num ( "9111" );
+    TNODE * b = parse_num ( "999" );
     TNODE * c = list_sum ( a, b );
 
     print_list ( a );
