@@ -1,6 +1,8 @@
 clear
-printf "%s\n%s\n" "   λ   " "-------" 
-g++ -Wall -pedantic list.c -fsanitize=address -g
-./a.out
-printf "%s\n%s\n" "-------" "  END  "
+g++ -Wall -pedantic "$1" -fsanitize=address -g
+
+if [ "$#" -eq 2 ]; then {
+    .a/.out > "$2";
+} else ./a.out;
+fi
 rm a.out;
