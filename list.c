@@ -28,11 +28,6 @@ void free_list ( TNODE * l ) {
     }
 }
 
-/**
- * @param str input string with digits for the linked list
- * @return pointer to the head of the parsed linked list 
-*/
-
 int list_size ( TNODE * l ) {
     int size = 0;
     while ( l ) {
@@ -53,6 +48,14 @@ int is_valid ( TNODE * l ) {
     return !isZero;
 }
 
+                                /*PARSING FUNCTIONS*/
+//----------------------------------------------------------------------------------//
+/**
+ * Function takes the input string and turns each digit into linked list, keeping the same order of the digits. 
+ * "1234" will be parsed into 1 -> 2 -> 3 -> 4 -> NULL
+ * @param str input string with digits for the linked list
+ * @return pointer to the head of the parsed linked list 
+*/
 TNODE * parse_list ( const char * str ) {
     TNODE * l = NULL, *curr = NULL;
     while ( *str ) {
@@ -73,6 +76,12 @@ TNODE * parse_list ( const char * str ) {
     return l;
 }
 
+/**
+ * Function takes the input string and turns each digit into linked list, reversing the order of digits. 
+ * "1234" will be parsed into 4 -> 3 -> 2 -> 1 -> NULL
+ * @param str input string with digits for the linked list
+ * @return pointer to the head of the parsed linked list 
+*/
 TNODE * parse_num ( const char * str ) {
     TNODE * l = NULL;   
     while ( *str ) {
@@ -89,6 +98,8 @@ TNODE * parse_num ( const char * str ) {
     }
     return l;
 }
+                                /*LIST OPERATIONS*/
+//----------------------------------------------------------------------------------//
 
 int compare_lists ( TNODE * a, TNODE * b ) {
     if ( list_size ( a ) != list_size ( b ) )
@@ -132,6 +143,8 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
         curr -> next = create_node ( carry + '0', NULL );
     return l;
 }
+                                /*PRINTING FUNCTIONS*/
+//----------------------------------------------------------------------------------//
 
 void print_list ( TNODE * l ) {
     if ( !l ) printf("ERR: LIST IS EMPTY");
@@ -141,6 +154,7 @@ void print_list ( TNODE * l ) {
     }
     printf("\n");
 }
+
 
 void print_num_rec ( TNODE * l, int first ) {
     if ( l -> next )
@@ -157,6 +171,8 @@ void print_num ( TNODE * l ) {
     printf("\n");
 }
 
+//----------------------------------------------------------------------------------//
+
 //TEST PROCEDURES
 void are_equal ( TNODE * ref, TNODE * actual ) {
     if ( !compare_lists ( ref, actual ) )
@@ -165,8 +181,9 @@ void are_equal ( TNODE * ref, TNODE * actual ) {
 }
 
 int main ( void ) {
-    TNODE * a = parse_list ( "275" );
-    TNODE * b = parse_list ( "326" );
+    
+    TNODE * a = parse_list ( "999" );
+    TNODE * b = parse_list ( "1111" );
     TNODE * c = list_sum ( a, b );
 
     print_list ( a );
