@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <assert.h>
 
+//QUICK DIRTY SETUP. THIS IS DUMB. VERY DUMB. DONT DO THIS!
+int g_OK = 0;
+int g_FAIL = 0;
 
                                 /*HELPER FUNCTIONS*/
 //----------------------------------------------------------------------------------//
@@ -196,17 +200,21 @@ TNODE * list_lshift ( TNODE * n, unsigned int shift ) {
     int val = 0, carry = 0, remain = 0;
     while ( n ) {
         val = from_hex ( n -> digit );
-        val = val << shift;
+        val = ( val << shift ) + carry;
         carry = val / 16;
         remain = val % 16;
-        printf("%x %x %x\n", val, carry, remain);
         if ( !l )
             curr = l = create_node ( to_hex ( remain ), NULL );
         else {
-            curr -> next = create_node ( to_hex ( remain + carry ), NULL );
+            curr -> next = create_node ( to_hex ( remain ), NULL );
             curr = curr -> next;
         }
         n = n -> next;
+    }
+    while ( carry ) {
+        curr -> next = create_node ( to_hex ( carry % 16 ), NULL );
+        curr = curr -> next;
+        carry /= 16;
     }
     return l;
 }
@@ -242,6 +250,11 @@ void print_num ( TNODE * l ) {
                             /*TESTING METHODS*/
 //----------------------------------------------------------------------------------//
 
+void print_results ( void ) {
+    printf("RESULTS:\nOK:%d\nFAIL:%d\n", g_OK, g_FAIL);
+    g_OK = 0; g_FAIL = 0;
+}
+
 void test_sum ( const char * n1, const char * n2, const char * r ) {
     TNODE * a, *b, *c, *ref;
 
@@ -258,26 +271,98 @@ void test_sum ( const char * n1, const char * n2, const char * r ) {
         printf("REF: ");
         print_list ( ref );
         printf("--------------------\n");
+        g_FAIL++;
     } 
+
+    g_OK++;
+
     del_list ( a );
     del_list ( b );
     del_list ( c );
     del_list ( ref );
 }
 
+void test_shift ( const char * n1, unsigned int shift, const char * r ) {
+    TNODE * a, *b, *ref;
+
+    a = parse_num ( n1 );
+    b = list_lshift ( a, shift );
+    ref = parse_num ( r );
+   
+    if ( !compare_lists ( ref, b ) ) {
+        printf("--------------------\n");
+        printf( "ERR: VALUE MISMATCH\n" );
+        printf("GOT: ");
+        print_list ( b );
+        printf("REF: ");
+        print_list ( ref );
+        printf("--------------------\n");
+        g_FAIL++;
+    } 
+
+    g_OK++;
+
+    del_list ( a );
+    del_list ( b );
+    del_list ( ref );
+}
+
 //----------------------------------------------------------------------------------//
 
 int main ( void ) {
-    TNODE * a = parse_num ( "1af" );
-    TNODE * r = list_lshift ( a, 3 );
-    TNODE * ref = parse_num ( "d78" );
     
-    print_list ( a );
-    print_list ( r );
-    print_list ( ref );
-    
-    del_list ( a );
-    del_list ( r );
-    del_list ( ref );
+    test_shift ( "3606aac3", 13, "6c0d5586000" );
+    test_shift ( "214fac79", 0, "214fac79" );
+    test_shift ( "45462fc8", 3, "22a317e40" );
+    test_shift ( "3c14e487", 9, "7829c90e00" );
+    test_shift ( "b890b28", 11, "5c48594000" );
+    test_shift ( "3676c03f", 18, "d9db00fc0000" );
+    test_shift ( "57a1077e", 1, "af420efc" );
+    test_shift ( "56f1cdb3", 4, "56f1cdb30" );
+    test_shift ( "1d135358", 13, "3a26a6b0000" );
+    test_shift ( "4be0255b", 8, "4be0255b00" );
+    test_shift ( "15f52aac", 18, "57d4aab00000" );
+    test_shift ( "6afe4c8f", 2, "1abf9323c" );
+    test_shift ( "6a1e58e8", 0, "6a1e58e8" );
+    test_shift ( "5bc359f4", 16, "5bc359f40000" );
+    test_shift ( "4d913431", 7, "26c89a1880" );
+    test_shift ( "40be309c", 1, "817c6138" );
+    test_shift ( "350e1338", 13, "6a1c2670000" );
+    test_shift ( "28684805", 9, "50d0900a00" );
+    test_shift ( "6c680f54", 4, "6c680f540" );
+    test_shift ( "aee7f82", 1, "15dcff04" );
+    test_shift ( "3c498cf0", 18, "f12633c00000" );
+    test_shift ( "55e924f7", 6, "157a493dc0" );
+    test_shift ( "23542faf", 14, "8d50bebc000" );
+    test_shift ( "2d0f916e", 15, "1687c8b70000" );
+    test_shift ( "4437cf93", 17, "886f9f260000" );
+
+    test_sum ( "1478488643", "909165219", "2387653862" );
+    test_sum ( "156825012", "1867485019", "2024310031" );
+    test_sum ( "287997204", "1702106722", "1990103926" );
+    test_sum ( "1827523588", "1300770670", "3128294258" );
+    test_sum ( "56698276", "875354288", "932052564" );
+    test_sum ( "722193058", "1828264209", "2550457267" );
+    test_sum ( "725264878", "78830385", "804095263" );
+    test_sum ( "649615824", "891656784", "1541272608" );
+    test_sum ( "1526732041", "1721357656", "3248089697" );
+    test_sum ( "1267188419", "1039199399", "2306387818" );
+    test_sum ( "741042443", "255870837", "996913280" );
+    test_sum ( "541593340", "311177332", "852770672" );
+    test_sum ( "1991318608", "925882169", "2917200777" );
+    test_sum ( "927139023", "254275513", "1181414536" );
+    test_sum ( "361631392", "974402731", "1336034123" );
+    test_sum ( "1297575088", "1840120035", "3137695123" );
+    test_sum ( "1883567950", "1454400101", "3337968051" );
+    test_sum ( "1560121406", "24081506", "1584202912" );
+    test_sum ( "1009023175", "1240161346", "2249184521" );
+    test_sum ( "1324852176", "1065721451", "2390573627" );
+    test_sum ( "2115515635", "2047045234", "4162560869" );
+    test_sum ( "746502012", "693296865", "1439798877" );
+    test_sum ( "2125875619", "1396117836", "3521993455" );
+    test_sum ( "1584953649", "1505124012", "3090077661" );
+    test_sum ( "969991844", "704658420", "1674650264" );
+
+    print_results();
     return 0;
 }
