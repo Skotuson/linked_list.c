@@ -26,10 +26,16 @@ int sum_digits ( int a, int b, int * c ) {
     return r;
 }
 
-char get_digit ( int a ) {
-    if ( a < 10 )
-        return a + '0';
-    return a - 10 + 'a';
+int from_hex ( char digit ) {
+    if ( isdigit( digit ) )
+        return digit - '0';
+    return digit - 'a' + 10;
+}
+
+char to_hex ( int digit ) {
+    if ( digit < 10 )
+        return digit + '0';
+    return digit - 10 + 'a';
 }
 
 typedef struct TNode {
@@ -187,8 +193,19 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
 TNODE * list_lshift ( TNODE * n, unsigned int shift ) {
 
     TNODE * l = NULL, *curr = NULL;
-    int base = 1, val = 0, carry = 0;
+    int val = 0, carry = 0, remain = 0;
     while ( n ) {
+        val = from_hex ( n -> digit );
+        val = val << shift;
+        carry = val / 16;
+        remain = val % 16;
+        printf("%x %x %x\n", val, carry, remain);
+        if ( !l )
+            curr = l = create_node ( to_hex ( remain ), NULL );
+        else {
+            curr -> next = create_node ( to_hex ( remain + carry ), NULL );
+            curr = curr -> next;
+        }
         n = n -> next;
     }
     return l;
@@ -252,14 +269,15 @@ void test_sum ( const char * n1, const char * n2, const char * r ) {
 
 int main ( void ) {
     TNODE * a = parse_num ( "1af" );
-    TNODE * r = list_lshift ( a, 1 );
+    TNODE * r = list_lshift ( a, 3 );
+    TNODE * ref = parse_num ( "d78" );
     
-    print_num ( a );
     print_list ( a );
-    print_num ( r );
     print_list ( r );
+    print_list ( ref );
     
     del_list ( a );
     del_list ( r );
+    del_list ( ref );
     return 0;
 }
