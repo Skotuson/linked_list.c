@@ -13,7 +13,14 @@ void gen_sum ( int cnt ) {
 }
 
 void gen_shift ( int cnt ) {
-
+    long long a, r;
+    int shift;
+    for ( int i = 0; i < cnt; i++ ) {
+        a = rand();
+        shift = rand() % 20;
+        r = a << shift;
+        printf("test_shift ( \"%llx\", %d, \"%llx\" );\n", a, shift, r);
+    }
 }
 
 int main ( void ) {
