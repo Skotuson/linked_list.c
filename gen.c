@@ -2,14 +2,35 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main ( void ) {
+void gen_sum ( int cnt ) {
     long long a, b, r;
-    srand( time(NULL) );    
-    for ( int i = 0; i < 100; i++ ) {
+    for ( int i = 0; i < cnt; i++ ) {
         a = rand();
         b = rand();
         r = a + b;
-        printf("test ( \"%lld\", \"%lld\", \"%lld\" );\n", a, b, r);
+        printf("test_sum ( \"%lld\", \"%lld\", \"%lld\" );\n", a, b, r);
     }
+}
+
+void gen_shift ( int cnt ) {
+
+}
+
+int main ( void ) {
+    int c = 0;
+    if ( scanf( "%d", & c ) != 1 || c < 1 || c > 2 ) {
+        printf("Neplatny vstup.\n");
+        return 1;
+    } 
+    srand( time(NULL) );
+    switch ( c ) {
+        case 1:
+            gen_sum ( 1000 );
+            break;
+        case 2:
+            gen_shift ( 100 );
+            break;
+    }    
+  
     return 0;
 }
