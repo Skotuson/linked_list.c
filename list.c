@@ -42,12 +42,15 @@ char to_hex ( int digit ) {
     return digit - 10 + 'a';
 }
 
+void print_list ( TNODE * l );
+
+                                /*LIST FUNCTIONS*/
+//----------------------------------------------------------------------------------//
+
 typedef struct TNode {
     struct TNode * next;
     char digit;
 } TNODE;
-
-void print_list ( TNODE * l );
 
 TNODE * create_node ( char digit, TNODE * next ) {
     TNODE * node = ( TNODE* ) malloc ( sizeof( TNODE ) );
