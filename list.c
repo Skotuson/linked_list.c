@@ -4,6 +4,7 @@
 
                                 /*HELPER FUNCTIONS*/
 //----------------------------------------------------------------------------------//
+
 int get_min ( int a, int b ) {
     return a < b ? a : b;
 }
@@ -22,6 +23,12 @@ int sum_digits ( int a, int b, int * c ) {
         r %= 10;
     }
     return r;
+}
+
+char get_digit ( int a ) {
+    if ( a < 10 )
+        return a + '0';
+    return a - 10 + 'a';
 }
 
 typedef struct TNode {
@@ -107,7 +114,7 @@ TNODE * parse_list ( const char * str ) {
 TNODE * parse_num ( const char * str ) {
     TNODE * l = NULL;   
     while ( *str ) {
-        if ( isdigit ( *str ) ) {
+        if ( isdigit ( *str ) || ( *str >= 'a' && *str <= 'f' ) ) {
             if ( !l ) 
                 l = create_node ( *str, NULL );
             else l = create_node ( *str, l );    
@@ -142,7 +149,7 @@ int compare_lists ( TNODE * a, TNODE * b ) {
  * @return Pointer to the head of the linked list representing the sum.
 */
 TNODE * list_sum ( TNODE * a, TNODE * b ) {
-    
+
     TNODE * l = NULL, *curr = NULL;
     int n = get_min ( list_size ( a ), list_size ( b ) );
     int res = 0, carry = 0;
@@ -170,9 +177,19 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
     return l;
 }
 
-TNODE * list_shift ( TNODE * n, unsigned int shift ) {
-    TNODE * l = NULL;
+/***
+ * Treats all numbers as hexadecimal numbers.
+ * @param n Pointer to a linked list head
+ * @param shift Number of bits to shift
+ * @return Pointer to the head of a linked list representing the bit shifted number
+ */
+TNODE * list_lshift ( TNODE * n, unsigned int shift ) {
 
+    TNODE * l = NULL, *curr = NULL;
+    int base = 1, val = 0, carry = 0;
+    while ( n ) {
+        n = n -> next;
+    }
     return l;
 }
 
@@ -180,7 +197,7 @@ TNODE * list_shift ( TNODE * n, unsigned int shift ) {
 //----------------------------------------------------------------------------------//
 
 void print_list ( TNODE * l ) {
-    if ( !l ) printf("ERR: LIST IS EMPTY");
+    if ( !l ) printf("<EMPTY LIST>");
     while ( l ) {
         printf("%c -> ", l -> digit);
         l = l -> next;
@@ -197,7 +214,7 @@ void print_num_rec ( TNODE * l, int first ) {
 
 void print_num ( TNODE * l ) {
     if ( !l ) {
-        printf("ERR: LIST IS EMPTY\n");
+        printf("<EMPTY LIST>\n");
         return;
     }
     print_num_rec ( l, 1 );
@@ -218,17 +235,12 @@ void test ( const char * n1, const char * n2, const char * r ) {
     if ( !compare_lists ( ref, c ) ) {
         printf("--------------------\n");
         printf( "ERR: VALUE MISMATCH\n" );
-        print_list ( a );
-        print_list ( b );  
         printf("GOT: ");
         print_list ( c );
-        print_num ( c );
         printf("REF: ");
         print_list ( ref );
-        print_num ( ref );
         printf("--------------------\n");
     } 
-
     del_list ( a );
     del_list ( b );
     del_list ( c );
@@ -238,9 +250,18 @@ void test ( const char * n1, const char * n2, const char * r ) {
 //----------------------------------------------------------------------------------//
 
 int main ( void ) {
+    TNODE * a = parse_num ( "1af" );
+    TNODE * r = list_lshift ( a, 1 );
     
+    print_num ( a );
+    print_list ( a );
+    print_num ( r );
+    print_list ( r );
+    
+    del_list ( a );
+    del_list ( r );
     //List sum test
-    test ( "0", "0", "0" );
+  /*test ( "0", "0", "0" );
     test ( "1", "1", "2" );
     test ( "0", "1", "1" );
     test ( "111", "9999", "10110" );
@@ -346,7 +367,7 @@ int main ( void ) {
     test ( "2107969947", "262045903", "2370015850" );
     test ( "547588492", "1289924006", "1837512498" );
     test ( "787246471", "632720147", "1419966618" );
-    test ( "440181199", "837576290", "1277757489" );
+    test ( "440181199", "837576290", "1277757489" );*/
 
 
     return 0;
