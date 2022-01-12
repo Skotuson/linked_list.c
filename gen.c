@@ -32,10 +32,10 @@ int main ( void ) {
     srand( time(NULL) );
     switch ( c ) {
         case 1:
-            gen_sum ( 1000 );
+            gen_sum ( 25 );
             break;
         case 2:
-            gen_shift ( 100 );
+            gen_shift ( 25 );
             break;
     }    
   
