@@ -17,7 +17,7 @@ void gen_shift ( int cnt ) {
     int shift;
     for ( int i = 0; i < cnt; i++ ) {
         a = rand();
-        shift = rand() % 20;
+        shift = rand() % 32;
         r = a << shift;
         printf("test_shift ( \"%llx\", %d, \"%llx\" );\n", a, shift, r);
     }
