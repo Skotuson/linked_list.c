@@ -200,7 +200,7 @@ TNODE * list_sum ( TNODE * a, TNODE * b ) {
 TNODE * list_lshift ( TNODE * n, unsigned int shift ) {
 
     TNODE * l = NULL, *curr = NULL;
-    int val = 0, carry = 0, remain = 0;
+    long long int val = 0, carry = 0, remain = 0;
     while ( n ) {
         val = from_hex ( n -> digit );
         val = ( val << shift ) + carry;
@@ -314,31 +314,31 @@ void test_shift ( const char * n1, unsigned int shift, const char * r ) {
 
 int main ( void ) {
     
-    test_shift ( "3606aac3", 13, "6c0d5586000" );
-    test_shift ( "214fac79", 0, "214fac79" );
-    test_shift ( "45462fc8", 3, "22a317e40" );
-    test_shift ( "3c14e487", 9, "7829c90e00" );
-    test_shift ( "b890b28", 11, "5c48594000" );
-    test_shift ( "3676c03f", 18, "d9db00fc0000" );
-    test_shift ( "57a1077e", 1, "af420efc" );
-    test_shift ( "56f1cdb3", 4, "56f1cdb30" );
-    test_shift ( "1d135358", 13, "3a26a6b0000" );
-    test_shift ( "4be0255b", 8, "4be0255b00" );
-    test_shift ( "15f52aac", 18, "57d4aab00000" );
-    test_shift ( "6afe4c8f", 2, "1abf9323c" );
-    test_shift ( "6a1e58e8", 0, "6a1e58e8" );
-    test_shift ( "5bc359f4", 16, "5bc359f40000" );
-    test_shift ( "4d913431", 7, "26c89a1880" );
-    test_shift ( "40be309c", 1, "817c6138" );
-    test_shift ( "350e1338", 13, "6a1c2670000" );
-    test_shift ( "28684805", 9, "50d0900a00" );
-    test_shift ( "6c680f54", 4, "6c680f540" );
-    test_shift ( "aee7f82", 1, "15dcff04" );
-    test_shift ( "3c498cf0", 18, "f12633c00000" );
-    test_shift ( "55e924f7", 6, "157a493dc0" );
-    test_shift ( "23542faf", 14, "8d50bebc000" );
-    test_shift ( "2d0f916e", 15, "1687c8b70000" );
-    test_shift ( "4437cf93", 17, "886f9f260000" );
+    test_shift ( "6b56f85e", 8, "6b56f85e00" );
+    test_shift ( "4c65780b", 6, "13195e02c0" );
+    test_shift ( "b685b32", 5, "16d0b6640" );
+    test_shift ( "5ff7c649", 19, "2ffbe32480000" );
+    test_shift ( "7d60f052", 14, "1f583c148000" );
+    test_shift ( "1b02f8ef", 18, "6c0be3bc0000" );
+    test_shift ( "15218ad4", 13, "2a4315a8000" );
+    test_shift ( "125aa27", 2, "496a89c" );
+    test_shift ( "44d85eca", 10, "113617b2800" );
+    test_shift ( "4e2f1548", 11, "27178aa4000" );
+    test_shift ( "4834ee40", 8, "4834ee4000" );
+    test_shift ( "2f2254a1", 18, "bc8952840000" );
+    test_shift ( "18e68ee8", 18, "639a3ba00000" );
+    test_shift ( "60f4cc79", 0, "60f4cc79" );
+    test_shift ( "69d303af", 19, "34e981d780000" );
+    test_shift ( "65d6a857", 1, "cbad50ae" );
+    test_shift ( "2d5fd98", 10, "b57f66000" );
+    test_shift ( "576abf40", 6, "15daafd000" );
+    test_shift ( "451c7a1f", 13, "8a38f43e000" );
+    test_shift ( "6b9c60c9", 6, "1ae7183240" );
+    test_shift ( "5fd73dfc", 8, "5fd73dfc00" );
+    test_shift ( "5a58b5c", 12, "5a58b5c000" );
+    test_shift ( "1c4dd1b1", 4, "1c4dd1b10" );
+    test_shift ( "5987962", 12, "5987962000" );
+    test_shift ( "79160be6", 14, "1e4582f98000" );
 
     test_sum ( "1478488643", "909165219", "2387653862" );
     test_sum ( "156825012", "1867485019", "2024310031" );
