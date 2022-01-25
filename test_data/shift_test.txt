@@ -1,5 +1,4 @@
 test_shift ( "3606aac3", 13, "6c0d5586000" );
-test_shift ( "214fac79", 0, "214fac79" );
 test_shift ( "45462fc8", 3, "22a317e40" );
 test_shift ( "3c14e487", 9, "7829c90e00" );
 test_shift ( "b890b28", 11, "5c48594000" );
